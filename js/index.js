@@ -5,7 +5,7 @@ const produtos = [
         nome: "Whisky Johnnie Walker Blue Label",
         descricao: "Blended Scotch Whisky de luxo com sabores complexos.",
         preco: "R$ 1.899,90",
-        imagem: "assets/img/1.jpg"
+        imagem: "assets/img/1.jpg" 
     },
     {
         id: 2,
