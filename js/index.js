@@ -1,3 +1,87 @@
+// Array de produtos (bebidas e charutos)
+const produtos = [
+    {
+        id: 1,
+        nome: "Whisky Johnnie Walker Blue Label",
+        descricao: "Blended Scotch Whisky de luxo com sabores complexos.",
+        preco: "R$ 1.899,90",
+        imagem: "assets/img/1.jpg"
+    },
+    {
+        id: 2,
+        nome: "Charuto Cohiba Siglo VI",
+        descricao: "Um dos charutos mais cobiçados do mundo, feito à mão em Cuba.",
+        preco: "R$ 599,90",
+        imagem: "assets/img/Charuto Cohiba Siglo VI.jpg"
+    },
+    {
+        id: 3,
+        nome: "Vinho Château Lafite Rothschild 2015",
+        descricao: "Um dos vinhos mais prestigiados de Bordeaux, safra excepcional.",
+        preco: "R$ 4.999,90",
+        imagem: "assets/img/Vinho Château Lafite Rothschild 2015.jpg"
+    },
+    {
+        id: 4,
+        nome: "Conhaque Louis XIII",
+        descricao: "O ápice da arte do conhaque, envelhecido por décadas.",
+        preco: "R$ 12.999,90",
+        imagem: "assets/img/Conhaque Louis XIII.jpg"
+    }
+];
+
+// Função para verificar se a imagem existe
+function verificarImagem(url) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+    });
+}
+
+// Função principal para carregar os produtos
+async function carregarProdutosDestaque() {
+    const container = document.getElementById('destaques');
+    
+    for (const produto of produtos) {
+        const caminhoImagem = produto.imagem;
+        const imagemValida = await verificarImagem(caminhoImagem);
+        
+        const produtoHTML = `
+            <div class="produto-card">
+                <div class="produto-img">
+                    <img src="${imagemValida ? caminhoImagem : 'assets/img/placeholder.jpg'}" 
+                         alt="${produto.nome}"
+                         onerror="this.src='assets/img/placeholder.jpg'">
+                </div>
+                <div class="produto-info">
+                    <h3>${produto.nome}</h3>
+                    <p>${produto.descricao}</p>
+                    <div class="preco">${produto.preco}</div>
+                    <button class="btn" onclick="adicionarAoCarrinho(${produto.id})">Adicionar ao Carrinho</button>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML += produtoHTML;
+    }
+}
+
+// Função para adicionar ao carrinho
+function adicionarAoCarrinho(id) {
+    const produto = produtos.find(p => p.id === id);
+    if (produto) {
+        // Aqui você pode implementar a lógica real do carrinho
+        alert(`${produto.nome} foi adicionado ao carrinho!\nPreço: ${produto.preco}`);
+        
+        // Exemplo: adicionar ao localStorage
+        let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+        carrinho.push(produto);
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    }
+}
+
 // Menu Mobile
 const burger = document.querySelector('.burger');
 const navLinks = document.querySelector('.nav-links');
@@ -15,84 +99,7 @@ document.querySelectorAll('.nav-links a').forEach(link => {
     });
 });
 
-// Carregar produtos em destaque
-const destaquesContainer = document.getElementById('destaques');
-
-const produtos = [
-    {
-        id: 1,
-        nome: "Whisky Johnnie Walker Blue Label",
-        descricao: "Blended Scotch Whisky de luxo com sabores complexos.",
-        preco: "R$ 1.899,90",
-        imagem: "img/produtos/whisky-blue-label.jpg"
-    },
-    {
-        id: 2,
-        nome: "Charuto Cohiba Siglo VI",
-        descricao: "Um dos charutos mais cobiçados do mundo, feito à mão em Cuba.",
-        preco: "R$ 599,90",
-        imagem: "img/produtos/cohiba-siglo-vi.jpg"
-    },
-    {
-        id: 3,
-        nome: "Vinho Château Lafite Rothschild 2015",
-        descricao: "Um dos vinhos mais prestigiados de Bordeaux, safra excepcional.",
-        preco: "R$ 4.999,90",
-        imagem: "img/produtos/lafite-rothschild.jpg"
-    },
-    {
-        id: 4,
-        nome: "Conhaque Louis XIII",
-        descricao: "O ápice da arte do conhaque, envelhecido por décadas.",
-        preco: "R$ 12.999,90",
-        imagem: "img/produtos/louis-xiii.jpg"
-    }
-];
-
-function carregarProdutos() {
-    destaquesContainer.innerHTML = '';
-    
-    produtos.forEach(produto => {
-        const produtoHTML = `
-            <div class="produto-card">
-                <div class="produto-img">
-                    <img src="${produto.imagem}" alt="${produto.nome}">
-                </div>
-                <div class="produto-info">
-                    <h3>${produto.nome}</h3>
-                    <p>${produto.descricao}</p>
-                    <div class="preco">${produto.preco}</div>
-                    <button class="btn" onclick="adicionarAoCarrinho(${produto.id})">Adicionar ao Carrinho</button>
-                </div>
-            </div>
-        `;
-        
-        destaquesContainer.innerHTML += produtoHTML;
-    });
-}
-
-// Simulação de carrinho
-function adicionarAoCarrinho(id) {
-    const produto = produtos.find(p => p.id === id);
-    alert(`${produto.nome} foi adicionado ao carrinho!`);
-    // Aqui você implementaria a lógica real do carrinho
-}
-
-// Carregar produtos quando a página carregar
-window.addEventListener('DOMContentLoaded', carregarProdutos);
-
-// Efeito de scroll suave
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
-});
-
-// Validação do formulário de newsletter
+// Newsletter
 const newsletterForm = document.querySelector('.newsletter form');
 if (newsletterForm) {
     newsletterForm.addEventListener('submit', function(e) {
@@ -102,8 +109,16 @@ if (newsletterForm) {
         if (email && email.includes('@') && email.includes('.')) {
             alert('Obrigado por assinar nossa newsletter!');
             this.reset();
+            
+            // Salvar no localStorage
+            const assinantes = JSON.parse(localStorage.getItem('newsletter')) || [];
+            assinantes.push(email);
+            localStorage.setItem('newsletter', JSON.stringify(assinantes));
         } else {
             alert('Por favor, insira um e-mail válido.');
         }
     });
 }
+
+// Carregar produtos quando a página estiver pronta
+document.addEventListener('DOMContentLoaded', carregarProdutosDestaque);
